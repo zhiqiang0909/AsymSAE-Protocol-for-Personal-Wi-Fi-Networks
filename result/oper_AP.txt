@@ -1,0 +1,224 @@
+========================================================================
+  AsymSAE Detailed Primitive Operation Timing Evaluation
+  Curve: prime192v1
+  Runs per operation: 1000
+========================================================================
+
+>>> Preparing protocol-like inputs
+      Input preparation completed in 1750.331131 ms
+      Note: preparation time is NOT included in the operation averages.
+      Note: serialized HMAC messages and KDF contexts are prepared before timing.
+
+>>> Measuring primitive operations
+
+========================================================================
+  Average Basic Primitive Operation Timings
+========================================================================
+  T_pm: Point multiplication P ** a                         0.156801 ms
+  T_pa: Point addition P * Q                                0.001625 ms
+  T_H2C: H2C(π0|SSID)                                       0.019973 ms
+  T_H0: H0(pw,SSID,s)                                       0.003277 ms
+  T_H1: H1(E1,s1,E2,s2,π0)                                  0.032988 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL of listed average timings                           0.214665 ms
+
+========================================================================
+  Average Detailed HMAC Timings in AsymSAE
+========================================================================
+  T_HMAC_val: HMAC(0^L,max(MAC_C,MAC_S)||min(MAC_C,MAC_S))   0.002122 ms
+  T_HMAC_seed_C: HMAC(0^L,[K_C]_x)                          0.002531 ms
+  T_HMAC_seed_S: HMAC(0^L,[K_S]_x)                          0.002361 ms
+  T_HMAC_Con_C: HMAC(kck_c,s1|E1|s2|E2)                     0.002771 ms
+  T_HMAC_Verify_Con_C: HMAC(kck_s,s1|E1|s2|E2)              0.002771 ms
+  T_HMAC_Con_S: HMAC(kck_s,s2|E2|s1|E1)                     0.002594 ms
+  T_HMAC_Verify_Con_S: HMAC(kck_c,s2|E2|s1|E1)              0.002186 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL of listed average timings                           0.017335 ms
+
+========================================================================
+  Average Detailed KDF Timings in AsymSAE
+========================================================================
+  T_KDF_C: KDF(seed_C,s1,L+256)                             0.005151 ms
+  T_KDF_S: KDF(seed_S,s1,L+256)                             0.004934 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL of listed average timings                           0.010085 ms
+
+========================================================================
+  AVERAGE SUMMARY
+========================================================================
+  Curve:                              prime192v1
+  Runs per operation:                 1000
+  Sum of basic average operations:      0.214665 ms
+  Sum of detailed HMAC averages:        0.017335 ms
+  Sum of detailed KDF averages:         0.010085 ms
+  Sum of all listed average timings:    0.242085 ms
+========================================================================
+
+========================================================================
+  AsymSAE Detailed Primitive Operation Timing Evaluation
+  Curve: prime256v1
+  Runs per operation: 1000
+========================================================================
+
+>>> Preparing protocol-like inputs
+      Input preparation completed in 535.166240 ms
+      Note: preparation time is NOT included in the operation averages.
+      Note: serialized HMAC messages and KDF contexts are prepared before timing.
+
+>>> Measuring primitive operations
+
+========================================================================
+  Average Basic Primitive Operation Timings
+========================================================================
+  T_pm: Point multiplication P ** a                         0.051135 ms
+  T_pa: Point addition P * Q                                0.003237 ms
+  T_H2C: H2C(π0|SSID)                                       0.031767 ms
+  T_H0: H0(pw,SSID,s)                                       0.003237 ms
+  T_H1: H1(E1,s1,E2,s2,π0)                                  0.011739 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL of listed average timings                           0.101114 ms
+
+========================================================================
+  Average Detailed HMAC Timings in AsymSAE
+========================================================================
+  T_HMAC_val: HMAC(0^L,max(MAC_C,MAC_S)||min(MAC_C,MAC_S))   0.002377 ms
+  T_HMAC_seed_C: HMAC(0^L,[K_C]_x)                          0.002343 ms
+  T_HMAC_seed_S: HMAC(0^L,[K_S]_x)                          0.002837 ms
+  T_HMAC_Con_C: HMAC(kck_c,s1|E1|s2|E2)                     0.002945 ms
+  T_HMAC_Verify_Con_C: HMAC(kck_s,s1|E1|s2|E2)              0.002357 ms
+  T_HMAC_Con_S: HMAC(kck_s,s2|E2|s1|E1)                     0.002235 ms
+  T_HMAC_Verify_Con_S: HMAC(kck_c,s2|E2|s1|E1)              0.002053 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL of listed average timings                           0.017146 ms
+
+========================================================================
+  Average Detailed KDF Timings in AsymSAE
+========================================================================
+  T_KDF_C: KDF(seed_C,s1,L+256)                             0.004777 ms
+  T_KDF_S: KDF(seed_S,s1,L+256)                             0.004756 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL of listed average timings                           0.009533 ms
+
+========================================================================
+  AVERAGE SUMMARY
+========================================================================
+  Curve:                              prime256v1
+  Runs per operation:                 1000
+  Sum of basic average operations:      0.101114 ms
+  Sum of detailed HMAC averages:        0.017146 ms
+  Sum of detailed KDF averages:         0.009533 ms
+  Sum of all listed average timings:    0.127794 ms
+========================================================================
+
+========================================================================
+  AsymSAE Detailed Primitive Operation Timing Evaluation
+  Curve: secp192k1
+  Runs per operation: 1000
+========================================================================
+
+>>> Preparing protocol-like inputs
+      Input preparation completed in 1818.942582 ms
+      Note: preparation time is NOT included in the operation averages.
+      Note: serialized HMAC messages and KDF contexts are prepared before timing.
+
+>>> Measuring primitive operations
+
+========================================================================
+  Average Basic Primitive Operation Timings
+========================================================================
+  T_pm: Point multiplication P ** a                         0.167652 ms
+  T_pa: Point addition P * Q                                0.001296 ms
+  T_H2C: H2C(π0|SSID)                                       0.023038 ms
+  T_H0: H0(pw,SSID,s)                                       0.003915 ms
+  T_H1: H1(E1,s1,E2,s2,π0)                                  0.028668 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL of listed average timings                           0.224569 ms
+
+========================================================================
+  Average Detailed HMAC Timings in AsymSAE
+========================================================================
+  T_HMAC_val: HMAC(0^L,max(MAC_C,MAC_S)||min(MAC_C,MAC_S))   0.003213 ms
+  T_HMAC_seed_C: HMAC(0^L,[K_C]_x)                          0.002038 ms
+  T_HMAC_seed_S: HMAC(0^L,[K_S]_x)                          0.002172 ms
+  T_HMAC_Con_C: HMAC(kck_c,s1|E1|s2|E2)                     0.002301 ms
+  T_HMAC_Verify_Con_C: HMAC(kck_s,s1|E1|s2|E2)              0.002200 ms
+  T_HMAC_Con_S: HMAC(kck_s,s2|E2|s1|E1)                     0.001987 ms
+  T_HMAC_Verify_Con_S: HMAC(kck_c,s2|E2|s1|E1)              0.002107 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL of listed average timings                           0.016018 ms
+
+========================================================================
+  Average Detailed KDF Timings in AsymSAE
+========================================================================
+  T_KDF_C: KDF(seed_C,s1,L+256)                             0.004947 ms
+  T_KDF_S: KDF(seed_S,s1,L+256)                             0.004620 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL of listed average timings                           0.009568 ms
+
+========================================================================
+  AVERAGE SUMMARY
+========================================================================
+  Curve:                              secp192k1
+  Runs per operation:                 1000
+  Sum of basic average operations:      0.224569 ms
+  Sum of detailed HMAC averages:        0.016018 ms
+  Sum of detailed KDF averages:         0.009568 ms
+  Sum of all listed average timings:    0.250155 ms
+========================================================================
+
+========================================================================
+  AsymSAE Detailed Primitive Operation Timing Evaluation
+  Curve: secp256k1
+  Runs per operation: 1000
+========================================================================
+
+>>> Preparing protocol-like inputs
+      Input preparation completed in 3010.955406 ms
+      Note: preparation time is NOT included in the operation averages.
+      Note: serialized HMAC messages and KDF contexts are prepared before timing.
+
+>>> Measuring primitive operations
+
+========================================================================
+  Average Basic Primitive Operation Timings
+========================================================================
+  T_pm: Point multiplication P ** a                         0.290130 ms
+  T_pa: Point addition P * Q                                0.001312 ms
+  T_H2C: H2C(π0|SSID)                                       0.029936 ms
+  T_H0: H0(pw,SSID,s)                                       0.003420 ms
+  T_H1: H1(E1,s1,E2,s2,π0)                                  0.035272 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL of listed average timings                           0.360069 ms
+
+========================================================================
+  Average Detailed HMAC Timings in AsymSAE
+========================================================================
+  T_HMAC_val: HMAC(0^L,max(MAC_C,MAC_S)||min(MAC_C,MAC_S))   0.002044 ms
+  T_HMAC_seed_C: HMAC(0^L,[K_C]_x)                          0.002339 ms
+  T_HMAC_seed_S: HMAC(0^L,[K_S]_x)                          0.002094 ms
+  T_HMAC_Con_C: HMAC(kck_c,s1|E1|s2|E2)                     0.002482 ms
+  T_HMAC_Verify_Con_C: HMAC(kck_s,s1|E1|s2|E2)              0.002332 ms
+  T_HMAC_Con_S: HMAC(kck_s,s2|E2|s1|E1)                     0.002002 ms
+  T_HMAC_Verify_Con_S: HMAC(kck_c,s2|E2|s1|E1)              0.002037 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL of listed average timings                           0.015330 ms
+
+========================================================================
+  Average Detailed KDF Timings in AsymSAE
+========================================================================
+  T_KDF_C: KDF(seed_C,s1,L+256)                             0.005254 ms
+  T_KDF_S: KDF(seed_S,s1,L+256)                             0.005485 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL of listed average timings                           0.010739 ms
+
+========================================================================
+  AVERAGE SUMMARY
+========================================================================
+  Curve:                              secp256k1
+  Runs per operation:                 1000
+  Sum of basic average operations:      0.360069 ms
+  Sum of detailed HMAC averages:        0.015330 ms
+  Sum of detailed KDF averages:         0.010739 ms
+  Sum of all listed average timings:    0.386138 ms
+========================================================================
+

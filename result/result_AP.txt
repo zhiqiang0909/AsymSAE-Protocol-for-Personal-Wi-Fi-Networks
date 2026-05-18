@@ -1,0 +1,336 @@
+========================================================================
+  AsymSAE Protocol Simulation Average Timings
+  Curve: prime192v1
+  Successful runs: 1000
+========================================================================
+
+>>> Initialization Phase (offline, one-time)
+      Average initialization time over runs: 0.177862 ms
+      AP stores (π0, V = π1·H2C(π0|SSID), SSID, s)
+
+>>> Active Scanning
+      STA → AP : MAC_C = 00:11:22:33:44:55
+      AP  → STA: MAC_S = AA:BB:CC:DD:EE:FF, SSID = ESAE_Network, s = random per run
+
+========================================================================
+  Client Round 1 Average Timings (Commit)
+========================================================================
+  (π0,π1) = H0(pw,SSID,s)                                   0.005577 ms
+  val = HMAC(0^L,max||min) mod(q-1)+1                       0.006265 ms
+  PE = val·H2C(π0|SSID)                                     0.172983 ms
+  r1 ←R Z*p                                                 0.002743 ms
+  m1 ←R Z*p                                                 0.001249 ms
+  s1 = r1+m1 mod p                                          0.000507 ms
+  E1 = -m1·PE                                               0.148508 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL                                                     0.337833 ms
+
+========================================================================
+  Server Round 1 Average Timings (Commit + Key Derivation)
+========================================================================
+  Abort if s1∈{0,1} ∨ E1=O                                  0.170898 ms
+  val = HMAC(0^L,max||min) mod(q-1)+1                       0.009087 ms
+  PE = val·H2C(π0|SSID)                                     0.170613 ms
+  r2 ←R Z*p                                                 0.002838 ms
+  m2 ←R Z*p                                                 0.001284 ms
+  s2 = r2+m2 mod p                                          0.000512 ms
+  E2 = -m2·PE                                               0.147214 ms
+  c = H1(E1,s1,E2,s2,π0)                                    0.032754 ms
+  K_S = r2(E1+s1·PE+c·val·V)                                0.449827 ms
+  Abort if K_S=O                                            0.000389 ms
+  seed_S = HMAC(0^L, [K_S]_x)                               0.006467 ms
+  kck_s|pmk_s = KDF(seed_S, s1, L+256)                      0.008864 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL                                                     1.000748 ms
+
+========================================================================
+  Client Round 2 Average Timings (Key Derivation + Con_C)
+========================================================================
+  Drop if E2=E1 ∨ s2=s1                                     0.000730 ms
+  Abort if s2∈{0,1} ∨ E2=O                                  0.000335 ms
+  c = H1(E1,s1,E2,s2,π0)                                    0.030063 ms
+  K_C = (r1+c·π1)(E2+s2·PE)                                 0.306996 ms
+  Abort if K_C=O                                            0.000325 ms
+  seed_C = HMAC(0^L, [K_C]_x)                               0.006463 ms
+  kck_c|pmk_c = KDF(seed_C, s1, L+256)                      0.013002 ms
+  Con_C = HMAC(kck_c, s1|E1|s2|E2)                          0.024789 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL                                                     0.382703 ms
+
+========================================================================
+  Server Round 2 Average Timings (Verify Con_C + Con_S)
+========================================================================
+  Verify Con_C =? HMAC(kck_s, s1|E1|s2|E2)                  0.026081 ms
+  Con_S = HMAC(kck_s, s2|E2|s1|E1)                          0.023869 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL                                                     0.049949 ms
+
+========================================================================
+  Client Round 3 Average Timings (Verify Con_S)
+========================================================================
+  Verify Con_S =? HMAC(kck_c, s2|E2|s1|E1)                  0.023664 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL                                                     0.023664 ms
+
+========================================================================
+  AVERAGE SUMMARY
+========================================================================
+  Average initialization time:         0.177862 ms
+  Client average computation time:     0.744200 ms
+  Server average computation time:     1.050697 ms
+  Combined average total:              1.794897 ms
+  Combined average incl. init:         1.972759 ms
+========================================================================
+
+========================================================================
+  AsymSAE Protocol Simulation Average Timings
+  Curve: prime256v1
+  Successful runs: 1000
+========================================================================
+
+>>> Initialization Phase (offline, one-time)
+      Average initialization time over runs: 0.072684 ms
+      AP stores (π0, V = π1·H2C(π0|SSID), SSID, s)
+
+>>> Active Scanning
+      STA → AP : MAC_C = 00:11:22:33:44:55
+      AP  → STA: MAC_S = AA:BB:CC:DD:EE:FF, SSID = ESAE_Network, s = random per run
+
+========================================================================
+  Client Round 1 Average Timings (Commit)
+========================================================================
+  (π0,π1) = H0(pw,SSID,s)                                   0.004426 ms
+  val = HMAC(0^L,max||min) mod(q-1)+1                       0.005019 ms
+  PE = val·H2C(π0|SSID)                                     0.066441 ms
+  r1 ←R Z*p                                                 0.002980 ms
+  m1 ←R Z*p                                                 0.001244 ms
+  s1 = r1+m1 mod p                                          0.000374 ms
+  E1 = -m1·PE                                               0.036535 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL                                                     0.117019 ms
+
+========================================================================
+  Server Round 1 Average Timings (Commit + Key Derivation)
+========================================================================
+  Abort if s1∈{0,1} ∨ E1=O                                  0.068159 ms
+  val = HMAC(0^L,max||min) mod(q-1)+1                       0.006815 ms
+  PE = val·H2C(π0|SSID)                                     0.067621 ms
+  r2 ←R Z*p                                                 0.002405 ms
+  m2 ←R Z*p                                                 0.001233 ms
+  s2 = r2+m2 mod p                                          0.000411 ms
+  E2 = -m2·PE                                               0.036551 ms
+  c = H1(E1,s1,E2,s2,π0)                                    0.013030 ms
+  K_S = r2(E1+s1·PE+c·val·V)                                0.111640 ms
+  Abort if K_S=O                                            0.000277 ms
+  seed_S = HMAC(0^L, [K_S]_x)                               0.004320 ms
+  kck_s|pmk_s = KDF(seed_S, s1, L+256)                      0.007172 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL                                                     0.319633 ms
+
+========================================================================
+  Client Round 2 Average Timings (Key Derivation + Con_C)
+========================================================================
+  Drop if E2=E1 ∨ s2=s1                                     0.000650 ms
+  Abort if s2∈{0,1} ∨ E2=O                                  0.000269 ms
+  c = H1(E1,s1,E2,s2,π0)                                    0.011275 ms
+  K_C = (r1+c·π1)(E2+s2·PE)                                 0.073905 ms
+  Abort if K_C=O                                            0.000236 ms
+  seed_C = HMAC(0^L, [K_C]_x)                               0.003438 ms
+  kck_c|pmk_c = KDF(seed_C, s1, L+256)                      0.006618 ms
+  Con_C = HMAC(kck_c, s1|E1|s2|E2)                          0.009616 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL                                                     0.106006 ms
+
+========================================================================
+  Server Round 2 Average Timings (Verify Con_C + Con_S)
+========================================================================
+  Verify Con_C =? HMAC(kck_s, s1|E1|s2|E2)                  0.009572 ms
+  Con_S = HMAC(kck_s, s2|E2|s1|E1)                          0.009057 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL                                                     0.018629 ms
+
+========================================================================
+  Client Round 3 Average Timings (Verify Con_S)
+========================================================================
+  Verify Con_S =? HMAC(kck_c, s2|E2|s1|E1)                  0.009592 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL                                                     0.009592 ms
+
+========================================================================
+  AVERAGE SUMMARY
+========================================================================
+  Average initialization time:         0.072684 ms
+  Client average computation time:     0.232617 ms
+  Server average computation time:     0.338263 ms
+  Combined average total:              0.570880 ms
+  Combined average incl. init:         0.643564 ms
+========================================================================
+
+========================================================================
+  AsymSAE Protocol Simulation Average Timings
+  Curve: secp192k1
+  Successful runs: 1000
+========================================================================
+
+>>> Initialization Phase (offline, one-time)
+      Average initialization time over runs: 0.201897 ms
+      AP stores (π0, V = π1·H2C(π0|SSID), SSID, s)
+
+>>> Active Scanning
+      STA → AP : MAC_C = 00:11:22:33:44:55
+      AP  → STA: MAC_S = AA:BB:CC:DD:EE:FF, SSID = ESAE_Network, s = random per run
+
+========================================================================
+  Client Round 1 Average Timings (Commit)
+========================================================================
+  (π0,π1) = H0(pw,SSID,s)                                   0.006381 ms
+  val = HMAC(0^L,max||min) mod(q-1)+1                       0.012735 ms
+  PE = val·H2C(π0|SSID)                                     0.198635 ms
+  r1 ←R Z*p                                                 0.003416 ms
+  m1 ←R Z*p                                                 0.001314 ms
+  s1 = r1+m1 mod p                                          0.000542 ms
+  E1 = -m1·PE                                               0.168190 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL                                                     0.391214 ms
+
+========================================================================
+  Server Round 1 Average Timings (Commit + Key Derivation)
+========================================================================
+  Abort if s1∈{0,1} ∨ E1=O                                  0.196658 ms
+  val = HMAC(0^L,max||min) mod(q-1)+1                       0.013342 ms
+  PE = val·H2C(π0|SSID)                                     0.191002 ms
+  r2 ←R Z*p                                                 0.003113 ms
+  m2 ←R Z*p                                                 0.001345 ms
+  s2 = r2+m2 mod p                                          0.000716 ms
+  E2 = -m2·PE                                               0.168527 ms
+  c = H1(E1,s1,E2,s2,π0)                                    0.037930 ms
+  K_S = r2(E1+s1·PE+c·val·V)                                0.500578 ms
+  Abort if K_S=O                                            0.000488 ms
+  seed_S = HMAC(0^L, [K_S]_x)                               0.007343 ms
+  kck_s|pmk_s = KDF(seed_S, s1, L+256)                      0.009635 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL                                                     1.130676 ms
+
+========================================================================
+  Client Round 2 Average Timings (Key Derivation + Con_C)
+========================================================================
+  Drop if E2=E1 ∨ s2=s1                                     0.000836 ms
+  Abort if s2∈{0,1} ∨ E2=O                                  0.000353 ms
+  c = H1(E1,s1,E2,s2,π0)                                    0.033323 ms
+  K_C = (r1+c·π1)(E2+s2·PE)                                 0.340507 ms
+  Abort if K_C=O                                            0.000428 ms
+  seed_C = HMAC(0^L, [K_C]_x)                               0.009083 ms
+  kck_c|pmk_c = KDF(seed_C, s1, L+256)                      0.008232 ms
+  Con_C = HMAC(kck_c, s1|E1|s2|E2)                          0.027530 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL                                                     0.420290 ms
+
+========================================================================
+  Server Round 2 Average Timings (Verify Con_C + Con_S)
+========================================================================
+  Verify Con_C =? HMAC(kck_s, s1|E1|s2|E2)                  0.028235 ms
+  Con_S = HMAC(kck_s, s2|E2|s1|E1)                          0.026437 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL                                                     0.054672 ms
+
+========================================================================
+  Client Round 3 Average Timings (Verify Con_S)
+========================================================================
+  Verify Con_S =? HMAC(kck_c, s2|E2|s1|E1)                  0.028114 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL                                                     0.028114 ms
+
+========================================================================
+  AVERAGE SUMMARY
+========================================================================
+  Average initialization time:         0.201897 ms
+  Client average computation time:     0.839619 ms
+  Server average computation time:     1.185348 ms
+  Combined average total:              2.024967 ms
+  Combined average incl. init:         2.226864 ms
+========================================================================
+
+========================================================================
+  AsymSAE Protocol Simulation Average Timings
+  Curve: secp256k1
+  Successful runs: 1000
+========================================================================
+
+>>> Initialization Phase (offline, one-time)
+      Average initialization time over runs: 0.341231 ms
+      AP stores (π0, V = π1·H2C(π0|SSID), SSID, s)
+
+>>> Active Scanning
+      STA → AP : MAC_C = 00:11:22:33:44:55
+      AP  → STA: MAC_S = AA:BB:CC:DD:EE:FF, SSID = ESAE_Network, s = random per run
+
+========================================================================
+  Client Round 1 Average Timings (Commit)
+========================================================================
+  (π0,π1) = H0(pw,SSID,s)                                   0.007991 ms
+  val = HMAC(0^L,max||min) mod(q-1)+1                       0.008969 ms
+  PE = val·H2C(π0|SSID)                                     0.319085 ms
+  r1 ←R Z*p                                                 0.004000 ms
+  m1 ←R Z*p                                                 0.001355 ms
+  s1 = r1+m1 mod p                                          0.000686 ms
+  E1 = -m1·PE                                               0.285849 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL                                                     0.627934 ms
+
+========================================================================
+  Server Round 1 Average Timings (Commit + Key Derivation)
+========================================================================
+  Abort if s1∈{0,1} ∨ E1=O                                  0.322065 ms
+  val = HMAC(0^L,max||min) mod(q-1)+1                       0.014837 ms
+  PE = val·H2C(π0|SSID)                                     0.319665 ms
+  r2 ←R Z*p                                                 0.004011 ms
+  m2 ←R Z*p                                                 0.001374 ms
+  s2 = r2+m2 mod p                                          0.000778 ms
+  E2 = -m2·PE                                               0.282355 ms
+  c = H1(E1,s1,E2,s2,π0)                                    0.051374 ms
+  K_S = r2(E1+s1·PE+c·val·V)                                0.850373 ms
+  Abort if K_S=O                                            0.000680 ms
+  seed_S = HMAC(0^L, [K_S]_x)                               0.009785 ms
+  kck_s|pmk_s = KDF(seed_S, s1, L+256)                      0.010742 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL                                                     1.868041 ms
+
+========================================================================
+  Client Round 2 Average Timings (Key Derivation + Con_C)
+========================================================================
+  Drop if E2=E1 ∨ s2=s1                                     0.000970 ms
+  Abort if s2∈{0,1} ∨ E2=O                                  0.000395 ms
+  c = H1(E1,s1,E2,s2,π0)                                    0.040925 ms
+  K_C = (r1+c·π1)(E2+s2·PE)                                 0.566874 ms
+  Abort if K_C=O                                            0.000652 ms
+  seed_C = HMAC(0^L, [K_C]_x)                               0.007756 ms
+  kck_c|pmk_c = KDF(seed_C, s1, L+256)                      0.010366 ms
+  Con_C = HMAC(kck_c, s1|E1|s2|E2)                          0.036263 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL                                                     0.664201 ms
+
+========================================================================
+  Server Round 2 Average Timings (Verify Con_C + Con_S)
+========================================================================
+  Verify Con_C =? HMAC(kck_s, s1|E1|s2|E2)                  0.034575 ms
+  Con_S = HMAC(kck_s, s2|E2|s1|E1)                          0.033570 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL                                                     0.068144 ms
+
+========================================================================
+  Client Round 3 Average Timings (Verify Con_S)
+========================================================================
+  Verify Con_S =? HMAC(kck_c, s2|E2|s1|E1)                  0.033399 ms
+  ──────────────────────────────────────────────────────────────────────
+  TOTAL                                                     0.033399 ms
+
+========================================================================
+  AVERAGE SUMMARY
+========================================================================
+  Average initialization time:         0.341231 ms
+  Client average computation time:     1.325533 ms
+  Server average computation time:     1.936185 ms
+  Combined average total:              3.261719 ms
+  Combined average incl. init:         3.602950 ms
+========================================================================
+
