@@ -1,0 +1,225 @@
+(* ------------------------------------------------------------------------- *)
+(* Common symbolic model for the updated AsymSAE protocol                     *)
+(* Protocol aligned with AsymSAE_protocol_updated.py.                         *)
+(* ------------------------------------------------------------------------- *)
+
+free c: channel.
+
+free MACC: bitstring.
+free MACS: bitstring.
+free SSID: bitstring.
+free salt: bitstring.
+free zeroL: bitstring.
+
+free pw: bitstring [private].
+
+type scalar.
+type point.
+type keymat.
+type seed.
+type kck_t.
+type pmk_t.
+
+fun h0_pi0(bitstring, bitstring, bitstring): bitstring.
+fun h0_pi1(bitstring, bitstring, bitstring): scalar.
+
+(* H2C(pi0 | SSID) *)
+fun h2c(bitstring, bitstring): point.
+
+(* val = HMAC(0^L, max(MACC,MACS) | min(MACC,MACS)) mod (q-1)+1 *)
+fun mac_order(bitstring, bitstring): bitstring.
+fun scalar_val(bitstring): scalar.
+
+(* Scalar/point operations for PE = val*H2C(pi0|SSID) and V = pi1*H2C(pi0|SSID). *)
+fun pwe(scalar, point): point.
+fun verifier(scalar, point): point.
+fun negpoint(scalar, point): point.
+fun adds(scalar, scalar): scalar.
+fun muls(scalar, scalar): scalar.
+fun elem(point, scalar, point): point.
+fun mul(scalar, point): point.
+
+free idpoint: point.
+free zero_scalar: scalar.
+free one_scalar: scalar.
+
+(* E + s*PE = (-m*PE) + (r+m)*PE = r*PE. *)
+equation forall r:scalar, m:scalar, p0:point;
+  elem(negpoint(m, p0), adds(r, m), p0) = mul(r, p0).
+
+(* c = H1(E1, s1, E2, s2, pi0), as in the updated protocol. *)
+fun h1_chal(point, scalar, point, scalar, bitstring): scalar.
+
+(* AP computes E1+s1*PE+c*val*V.  This is kept symbolic, with an equation
+   only at key computation time, so it represents the updated AP base term. *)
+fun aug_elem(point, scalar, scalar, point): point.
+
+fun client_key(scalar, point): keymat.
+fun server_key(scalar, point): keymat.
+fun shared_key(scalar, scalar, scalar, scalar, scalar, point): keymat.
+
+(* STA: K_C = (r1 + c*pi1) * (E2 + s2*PE). *)
+equation forall r1:scalar, r2:scalar, ch:scalar, pi1:scalar, v:scalar, b:point;
+  client_key(adds(r1, muls(ch, pi1)), mul(r2, pwe(v, b)))
+  = shared_key(r1, r2, ch, pi1, v, b).
+
+(* AP: K_S = r2 * (E1 + s1*PE + c*val*V). *)
+equation forall r1:scalar, r2:scalar, ch:scalar, pi1:scalar, v:scalar, b:point;
+  server_key(r2, aug_elem(mul(r1, pwe(v, b)), ch, v, verifier(pi1, b)))
+  = shared_key(r1, r2, ch, pi1, v, b).
+
+fun hmac_zero(keymat): seed.
+
+(* Updated code uses KDF(seed, s1, L+256). *)
+fun kdf_kck(seed, scalar): kck_t.
+fun kdf_pmk(seed, scalar): pmk_t.
+
+fun confirm_c(kck_t, scalar, point, scalar, point): bitstring.
+fun confirm_s(kck_t, scalar, point, scalar, point): bitstring.
+
+fun senc(bitstring, pmk_t): bitstring.
+reduc forall x:bitstring, k:pmk_t; sdec(senc(x, k), k) = x.
+
+fun msg_probe(bitstring): bitstring [data].
+fun msg_scan(bitstring, bitstring, bitstring): bitstring [data].
+fun msg_commit_c(bitstring, point, scalar): bitstring [data].
+fun msg_commit_s(point, scalar): bitstring [data].
+fun msg_confirm_c(bitstring): bitstring [data].
+fun msg_confirm_s(bitstring): bitstring [data].
+fun msg_secret(bitstring): bitstring [data].
+
+(* ------------------------------------------------------------------------- *)
+(* Forward-secrecy verification model                                         *)
+(* ------------------------------------------------------------------------- *)
+
+free fsSecret: bitstring [private].
+
+event c_running(bitstring, bitstring, bitstring, bitstring, pmk_t).
+event s_accept(bitstring, bitstring, bitstring, bitstring, pmk_t).
+event c_accept(bitstring, bitstring, bitstring, bitstring, pmk_t).
+event longterm_revealed().
+
+(* Forward secrecy query:
+   fsSecret is sent under a completed session PMK before phase 1.
+   In phase 1, long-term credentials are leaked.
+   If this query is true, old accepted-session PMKs remain secret after leakage.
+*)
+query attacker(fsSecret).
+
+(* Authentication is kept here as a sanity check under the normal phase-0 run. *)
+query mc:bitstring, ms:bitstring, sid:bitstring, st:bitstring, k:pmk_t;
+  inj-event(c_accept(mc, ms, sid, st, k)) ==> inj-event(s_accept(mc, ms, sid, st, k)).
+
+query mc:bitstring, ms:bitstring, sid:bitstring, st:bitstring, k:pmk_t;
+  inj-event(s_accept(mc, ms, sid, st, k)) ==> inj-event(c_running(mc, ms, sid, st, k)).
+
+let STA =
+  out(c, msg_probe(MACC));
+  in(c, msg_scan(macS_in:bitstring, ssid_in:bitstring, salt_in:bitstring));
+  if macS_in = MACS then
+
+    let pi0 = h0_pi0(pw, ssid_in, salt_in) in
+    let pi1 = h0_pi1(pw, ssid_in, salt_in) in
+    let base = h2c(pi0, ssid_in) in
+    let val = scalar_val(mac_order(MACC, macS_in)) in
+    let pe = pwe(val, base) in
+
+    new r1: scalar;
+    new m1: scalar;
+    let s1 = adds(r1, m1) in
+    let e1 = negpoint(m1, pe) in
+
+    out(c, msg_commit_c(MACC, e1, s1));
+
+    in(c, msg_commit_s(e2:point, s2:scalar));
+    if e2 = e1 then 0 else
+    if s2 = s1 then 0 else
+    if s2 = zero_scalar then 0 else
+    if s2 = one_scalar then 0 else
+    if e2 = idpoint then 0 else
+
+    let peer_elem = elem(e2, s2, pe) in
+    if peer_elem = idpoint then 0 else
+
+    let ch = h1_chal(e1, s1, e2, s2, pi0) in
+    let expc = adds(r1, muls(ch, pi1)) in
+    let kc = client_key(expc, peer_elem) in
+    let seedc = hmac_zero(kc) in
+    let kckc = kdf_kck(seedc, s1) in
+    let pmkc = kdf_pmk(seedc, s1) in
+
+    event c_running(MACC, macS_in, ssid_in, salt_in, pmkc);
+    out(c, msg_confirm_c(confirm_c(kckc, s1, e1, s2, e2)));
+
+    in(c, msg_confirm_s(cons_in:bitstring));
+    if cons_in = confirm_s(kckc, s2, e2, s1, e1) then
+      event c_accept(MACC, macS_in, ssid_in, salt_in, pmkc);
+      out(c, msg_secret(senc(fsSecret, pmkc)));
+      0
+    else
+      0
+  else
+    0.
+
+let AP =
+  let pi0s = h0_pi0(pw, SSID, salt) in
+  let pi1s = h0_pi1(pw, SSID, salt) in
+  let bases = h2c(pi0s, SSID) in
+  let V = verifier(pi1s, bases) in
+
+  in(c, msg_probe(macC_in:bitstring));
+  out(c, msg_scan(MACS, SSID, salt));
+
+  in(c, msg_commit_c(macC2:bitstring, e1:point, s1:scalar));
+  if macC2 = macC_in then
+    if s1 = zero_scalar then 0 else
+    if s1 = one_scalar then 0 else
+    if e1 = idpoint then 0 else
+
+    let val = scalar_val(mac_order(macC_in, MACS)) in
+    let pe = pwe(val, bases) in
+    let sta_elem = elem(e1, s1, pe) in
+    if sta_elem = idpoint then 0 else
+
+    new r2: scalar;
+    new m2: scalar;
+    let s2 = adds(r2, m2) in
+    let e2 = negpoint(m2, pe) in
+
+    if e2 = e1 then 0 else
+    if s2 = s1 then 0 else
+
+    let ch = h1_chal(e1, s1, e2, s2, pi0s) in
+    let ap_elem = aug_elem(sta_elem, ch, val, V) in
+    let ks = server_key(r2, ap_elem) in
+    let seeds = hmac_zero(ks) in
+    let kcks = kdf_kck(seeds, s1) in
+    let pmks = kdf_pmk(seeds, s1) in
+
+    out(c, msg_commit_s(e2, s2));
+
+    in(c, msg_confirm_c(conc_in:bitstring));
+    if conc_in = confirm_c(kcks, s1, e1, s2, e2) then
+      event s_accept(macC_in, MACS, SSID, salt, pmks);
+      out(c, msg_confirm_s(confirm_s(kcks, s2, e2, s1, e1)));
+      0
+    else
+      0
+  else
+    0.
+
+(* Phase-1 long-term secret leakage. This deliberately reveals more than the
+   AP-side verifier database: pw, pi0, pi1, and V. Old PMKs should still be safe
+   because the ephemeral scalars r1 and r2 are not revealed.
+*)
+let LeakLongTermAfter =
+  phase 1;
+  event longterm_revealed();
+  out(c, pw);
+  out(c, h0_pi0(pw, SSID, salt));
+  out(c, h0_pi1(pw, SSID, salt));
+  out(c, verifier(h0_pi1(pw, SSID, salt), h2c(h0_pi0(pw, SSID, salt), SSID)));
+  0.
+
+process
+  (!STA) | (!AP) | LeakLongTermAfter
